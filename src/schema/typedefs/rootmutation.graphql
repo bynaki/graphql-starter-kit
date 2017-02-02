@@ -1,0 +1,6 @@
+type RootMutation {
+  createAuthor(
+    name: String!
+    email: String!
+  ): Author
+}

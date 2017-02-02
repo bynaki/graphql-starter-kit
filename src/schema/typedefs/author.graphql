@@ -1,0 +1,9 @@
+# this is Author
+type Author {
+  # this is Author.id
+  id: ID
+  # this is Author.name
+  name: String
+  # this is Author.email
+  email: String
+}

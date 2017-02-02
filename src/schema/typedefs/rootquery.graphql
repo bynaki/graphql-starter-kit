@@ -1,0 +1,15 @@
+type RootQuery {
+  # this is author
+  author (
+    name: String!
+  ): Author
+
+  # these are authors
+  authors: [Author]
+
+  # this is echo()
+  echo (
+    # this is message
+    message: String!
+  ): String
+}
