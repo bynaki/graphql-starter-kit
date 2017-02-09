@@ -47,7 +47,11 @@ $ node --debug-brk app.js   # 첫번째 라인에서 브레이크, 대기
 - [GraphQL](http://graphql.org)
 - [Apollo GraphQL Client](http://dev.apollodata.com)
 - [Knex](http://knexjs.org)
-
+- Schema
+  - http://graphql.org/learn/schema/
+  - http://dev.apollodata.com/tools/graphql-tools/generate-schema.html
+- [Getting Started With GraphQL.js](http://graphql.org/graphql-js/)
+- [Running an Express GraphQL Server](http://graphql.org/graphql-js/running-an-express-graphql-server/)
 
 ## License
 

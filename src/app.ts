@@ -3,11 +3,9 @@
  */
 
 import * as express from 'express'
-import * as bodyParser from 'body-parser'
-import {GraphQLSchema} from 'graphql'
-import {graphqlExpress, graphiqlExpress} from 'graphql-server-express'
-import {makeExecutableSchema} from 'graphql-tools'
-import schema from './schema'
+import * as graphqlHTTP from 'express-graphql'
+import schema from './schema/typedefs'
+import rootValue from './schema/resolvers'
 
 export class Server {
   private app: express.Application
@@ -15,19 +13,10 @@ export class Server {
   constructor() {
     this.app = express()
 
-    /**
-     * GraphQL
-     * http://dev.apollodata.com/tools/graphql-server/setup.html#graphqlExpress
-     */
-    this.app.use('/graphql', bodyParser.json(), graphqlExpress({
+    this.app.use('/graphql', graphqlHTTP({
       schema,
-    }))
-    /**
-     * GraphIQL
-     * http://dev.apollodata.com/tools/graphql-server/graphiql.html#graphiqlExpress
-     */
-    this.app.use('/graphiql', graphiqlExpress({
-      endpointURL: '/graphql',
+      rootValue,
+      graphiql: true,
     }))
   }
 

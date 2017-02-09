@@ -1,4 +1,4 @@
-type RootQuery {
+type Query {
   # this is author
   author (
     name: String!
