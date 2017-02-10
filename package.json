@@ -25,6 +25,7 @@
     "@types/express-graphql": "0.0.33",
     "@types/fs-extra": "0.0.37",
     "@types/glob": "^5.0.30",
+    "@types/graphql": "^0.8.6",
     "@types/gulp": "^3.8.32",
     "@types/knex": "0.0.40",
     "@types/mocha": "^2.2.37",
@@ -47,6 +48,7 @@
   "dependencies": {
     "express": "^4.14.0",
     "express-graphql": "^0.6.3",
+    "fourdollar.promisify": "^1.0.0",
     "glob": "^7.1.1",
     "graphql": "^0.8.2",
     "knex": "^0.12.6",

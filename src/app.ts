@@ -4,8 +4,8 @@
 
 import * as express from 'express'
 import * as graphqlHTTP from 'express-graphql'
-import schema from './schema/typedefs'
-import rootValue from './schema/resolvers'
+import {schema, RootResolver} from './schema'
+import {Request, Response, NextFunction} from 'express'
 
 export class Server {
   private app: express.Application
@@ -13,10 +13,18 @@ export class Server {
   constructor() {
     this.app = express()
 
-    this.app.use('/graphql', graphqlHTTP({
-      schema,
-      rootValue,
-      graphiql: true,
+    // this.app.use('/graphql', graphqlHTTP({
+    //   schema,
+    //   rootValue,
+    //   graphiql: true,
+    // }))
+
+    this.app.use('/graphql', graphqlHTTP((req: Request) => {
+      return {
+        schema,
+        rootValue: new RootResolver(),
+        graphiql: true,
+      }
     }))
   }
 

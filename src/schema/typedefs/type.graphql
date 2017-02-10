@@ -1,0 +1,25 @@
+interface IUser {
+  id: String
+  username: String
+  email: String
+}
+
+type User implements IUser {
+  id: String
+  username: String
+  email: String
+}
+
+type Authorizer implements IUser {
+  id: String
+  username: String
+  email: String
+  phone: String
+}
+
+input UserInput {
+  username: String!
+  password: String!
+  email: String!
+  phone: String
+}

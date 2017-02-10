@@ -1,0 +1,19 @@
+type Query {
+  # this is echo()
+  echo (
+    # this is message
+    message: String!
+  ): String
+
+  # query user
+  user(
+    id: ID
+    username: String
+  ): User
+
+  # query users
+  users: [User]
+
+  # need authentication
+  myProfile: Authorizer
+}

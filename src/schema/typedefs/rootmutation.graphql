@@ -1,6 +1,0 @@
-type Mutation {
-  createAuthor(
-    name: String!
-    email: String!
-  ): Author
-}

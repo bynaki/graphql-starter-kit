@@ -53,6 +53,7 @@ $ node --debug-brk app.js   # 첫번째 라인에서 브레이크, 대기
 - [Getting Started With GraphQL.js](http://graphql.org/graphql-js/)
 - [Running an Express GraphQL Server](http://graphql.org/graphql-js/running-an-express-graphql-server/)
 
+
 ## License
 
 Copyright (c) bynaki. All rights reserved.

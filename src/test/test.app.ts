@@ -5,12 +5,14 @@
 import * as request from 'supertest'
 import {expect} from 'chai'
 import {Server} from '../app'
+import promisify from 'fourdollar.promisify'
 
 describe('test app', () => {
   const server = request(new Server().application.listen(1818))
 
   it('echo', done => {
     server.post('/graphql')
+    .set('x-access-token', 'this is token')
     .send({
       query: `
       {
@@ -30,37 +32,43 @@ describe('test app', () => {
     })
   })
 
-  it('createAuthor', done => {
+  it('createUser', done => {
     server.post('/graphql')
     .send({
       query: `
       mutation {
-        bynaki: createAuthor(
-          name: "bynaki"
-          email: "bynaki@icloud.com"
-        ) {
+        bynaki: createUser(input: {
+          username: "bynaki"
+          password: "pwd"
+          email: "bynaki@email.com"
+          phone: "010-0000-0000"
+        }) {
           id
-          name
+          username
           email
         }
-        pythonaki: createAuthor(
-          name: "pythonaki"
-          email: "pythonaki@icloud.com"
-        ) {
+        hello: createUser(input: {
+          username: "hello"
+          password: "pwd"
+          email: "hello@email.com"
+          phone: "010-111-1111"
+        }) {
           id
-          name
+          username
           email
         }
-        rozio: createAuthor(
-          name: "rozio"
-          email: "rozio@icloud.com"
-        ) {
+        foobar: createUser(input: {
+          username: "foobar"
+          password: "pwd"
+          email: "foobar@email.com"
+          phone: "010-222-3333"
+        }) {
           id
-          name
+          username
           email
         }
       }
-      `,
+      `
     })
     .expect('Content-Type', /json/)
     .expect(200)
@@ -71,24 +79,26 @@ describe('test app', () => {
       expect(res.body.data).to.have.property('bynaki')
       expect(res.body.data.bynaki).to.deep.equal({
         id: res.body.data.bynaki.id,
-        name: 'bynaki',
-        email: 'bynaki@icloud.com',
+        username: 'bynaki',
+        email: 'bynaki@email.com',
       })
+      expect(res.body.data.hello.username).to.be.equal('hello')
+      expect(res.body.data.foobar.email).to.be.equal('foobar@email.com')
       done()
     })
   })
 
-  it('author', done => {
+  it('user', done => {
     server.post('/graphql')
     .send({
       query: `
       {
-        author(name: "bynaki") {
-          name
+        user(username: "bynaki") {
+          username
           email
         }
       }
-      `,
+      `
     })
     .expect('Content-Type', /json/)
     .expect(200)
@@ -96,27 +106,27 @@ describe('test app', () => {
       if(err) throw err
       expect(res.body).to.be.a('object')
       expect(res.body).to.have.property('data')
-      expect(res.body.data).to.have.property('author')
-      expect(res.body.data.author).to.deep.equal({
-        name: 'bynaki',
-        email: 'bynaki@icloud.com',
+      expect(res.body.data).to.have.property('user') 
+      expect(res.body.data.user).to.deep.equal({
+        username: 'bynaki',
+        email: 'bynaki@email.com',
       })
       done()
     })
   })
 
-  it('authors', done => {
+  it('users', done => {
     server.post('/graphql')
     .send({
       query: `
       {
-        authors {
+        users {
           id
-          name
+          username
           email
         }
       }
-      `,
+      `
     })
     .expect('Content-Type', /json/)
     .expect(200)
@@ -124,12 +134,8 @@ describe('test app', () => {
       if(err) throw err
       expect(res.body).to.be.a('object')
       expect(res.body).to.have.property('data')
-      expect(res.body.data).to.have.property('authors')
-      expect(res.body.data.authors).to.deep.equal([
-        {id: '1', name: 'bynaki', email: 'bynaki@icloud.com'},
-        {id: '2', name: 'pythonaki', email: 'pythonaki@icloud.com'},
-        {id: '3', name: 'rozio', email: 'rozio@icloud.com'},
-      ])
+      expect(res.body.data).to.have.property('users')
+      expect(res.body.data.users).to.have.lengthOf(3)
       done()
     })
   })
