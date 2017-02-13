@@ -21,14 +21,18 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "@types/body-parser": "0.0.33",
     "@types/chai": "^3.4.34",
     "@types/express-graphql": "0.0.33",
     "@types/fs-extra": "0.0.37",
     "@types/glob": "^5.0.30",
     "@types/graphql": "^0.8.6",
     "@types/gulp": "^3.8.32",
+    "@types/jsonwebtoken": "^7.2.0",
     "@types/knex": "0.0.40",
+    "@types/lodash": "^4.14.52",
     "@types/mocha": "^2.2.37",
+    "@types/morgan": "^1.7.32",
     "@types/node": "^7.0.0",
     "@types/supertest": "^2.0.0",
     "chai": "^3.5.0",
@@ -46,12 +50,16 @@
     "typescript": "^2.2.0"
   },
   "dependencies": {
+    "body-parser": "^1.16.1",
     "express": "^4.14.0",
     "express-graphql": "^0.6.3",
     "fourdollar.promisify": "^1.0.0",
     "glob": "^7.1.1",
     "graphql": "^0.8.2",
+    "jsonwebtoken": "^7.2.1",
     "knex": "^0.12.6",
+    "lodash": "^4.17.4",
+    "morgan": "^1.8.1",
     "sqlite3": "^3.1.8"
   }
 }

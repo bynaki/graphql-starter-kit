@@ -1,5 +1,11 @@
 type Mutation {
   createUser(
-    input: UserInput
+    input: UserInput!
   ): User
+
+  createToken(
+    username: String!
+    password: String!
+    expiresIn: String
+  ): String
 }
