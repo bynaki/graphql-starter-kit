@@ -5,15 +5,17 @@ type Query {
     message: String!
   ): String
 
-  # query user
+  # 유저 정보 
   user(
+    # 유저 id 나
     id: ID
+    # 유저 이름
     username: String
   ): User
 
-  # query users
+  # 유저들의 정보
   users: [User]
 
-  # need authentication
+  # 인증자의 정보
   myProfile: Authorizer
 }

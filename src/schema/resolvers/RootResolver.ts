@@ -1,3 +1,8 @@
+/**
+ * RootResolver
+ * 인증이 필요 없는 resolver
+ */
+
 import {Request} from 'express'
 import * as _ from 'lodash'
 import {sign} from 'jsonwebtoken'
@@ -8,7 +13,8 @@ import {
   IAuthorizer,
   IAuthInput,
   IUserInput,
-} from './interface'
+} from '../../interface'
+import {registeredClaim} from '../../config'
 
 
 export default class RootResolver {
@@ -51,7 +57,7 @@ export default class RootResolver {
   }
 
   async createToken(
-    {username, password, expiresIn = '1d'}: 
+    {username, password, expiresIn}: 
     {username: string, password: string, expiresIn?: string}
     , req: Request): Promise<string> {
     const auth = await this._getAuthorizer(username)
@@ -59,17 +65,18 @@ export default class RootResolver {
       throw new Error('authentication failed')
     }
     const secret = req.app.get('jwt-secret')
+    const options = _.clone(registeredClaim)
+    if(expiresIn) {
+      options.expiresIn = expiresIn
+    }
     const token = await promisify(sign)({
-      id: auth.id,
-      username: auth.username,
-      email: auth.email,
-    },
-    secret,
-    {
-      expiresIn,
-      issuer: 'bynaki',
-      subject: 'authentication',
-    })
+        id: auth.id,
+        username: auth.username,
+        email: auth.email,
+      },
+      secret,
+      options
+    )
     return token
   }
 

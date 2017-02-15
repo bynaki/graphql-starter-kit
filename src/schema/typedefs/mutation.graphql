@@ -1,11 +1,16 @@
 type Mutation {
+  # 새로운 유저 생성
   createUser(
     input: UserInput!
   ): User
 
+  # 인증을 위한 토큰 생성
   createToken(
+    # 인증할 유저 이름
     username: String!
+    # 인증할 유저 password
     password: String!
+    # 만료 기간 (ex: '1d', '5h', '10s')
     expiresIn: String
   ): String
 }

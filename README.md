@@ -19,11 +19,16 @@ GraphQL:
 - url: http://localhost:3000/graphql
 - method: post
 - query(json): {query: {re: echo(message: "Hello")}}
-- data(json): {"data": {"re": "recieved Hello"}}
+- recieve(json): {"data": {"re": "recieved Hello"}}
 
 GraphiQL:
-- url: http://localhost:3000/graphiql
+- url: http://localhost:3000/graphql
+- method: get
 
+
+## config.ts
+- 보안이 필요한 설정 파일
+- config.base.ts 를 config.ts로 복사해 사용.
 
 
 ## d.ts
@@ -52,6 +57,8 @@ $ node --debug-brk app.js   # 첫번째 라인에서 브레이크, 대기
   - http://dev.apollodata.com/tools/graphql-tools/generate-schema.html
 - [Getting Started With GraphQL.js](http://graphql.org/graphql-js/)
 - [Running an Express GraphQL Server](http://graphql.org/graphql-js/running-an-express-graphql-server/)
+- [JWT](https://jwt.io)
+- [node-jsonwebtoken](https://github.com/auth0/node-jsonwebtoken)
 
 
 ## License

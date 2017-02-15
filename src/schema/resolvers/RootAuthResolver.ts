@@ -1,3 +1,7 @@
+/**
+ * RootAuthResolver
+ * 인증이 필요한 resolver
+ */
 import {database} from '../../utils'
 import {Request} from 'express'
 import RootResolver from './RootResolver'
@@ -6,7 +10,7 @@ import {
   IAuthorizer,
   IUserInput,
   IDecodedToken,
-} from './interface'
+} from '../../interface'
 
 
 export default class RootAuthResolver extends RootResolver {

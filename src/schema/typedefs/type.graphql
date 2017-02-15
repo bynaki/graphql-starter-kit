@@ -4,12 +4,14 @@ interface IUser {
   email: String
 }
 
+# 유저 정보
 type User implements IUser {
   id: String
   username: String
   email: String
 }
 
+# 인증된 유저 정보
 type Authorizer implements IUser {
   id: String
   username: String
@@ -17,6 +19,7 @@ type Authorizer implements IUser {
   phone: String
 }
 
+# 등록할 유저 정보
 input UserInput {
   username: String!
   password: String!
