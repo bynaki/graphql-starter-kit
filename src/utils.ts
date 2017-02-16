@@ -18,7 +18,7 @@ export async function database(): Promise<Knex> {
   const knex = Knex({
     client: 'sqlite3',
     connection: {
-      filename: resolve(__dirname, '../../mydb.sqlite'),
+      filename: resolve(__dirname, 'mydb.sqlite'),
     }
   })
   await knex.schema.dropTableIfExists('user')
