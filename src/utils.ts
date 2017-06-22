@@ -5,7 +5,7 @@
 import * as Knex from 'knex'
 import {resolve} from 'path'
 import {createHmac} from 'crypto'
-import {secret} from './config'
+import cf from './config'
 
 
 /**
@@ -38,23 +38,26 @@ let _knex = null
 /**
  * graphql에서 쓰는 Error 메시지 포멧과 똑같이
  */
-export class GraphqlErrorMessages {
-  private _errors: {message: string}[]
+export class GraphqlErrorMessageList {
+  private _errors: MyErrorFormat[]
 
-  constructor(message: string = null) {
+  constructor(error: MyErrorFormat = null) {
     this._errors = []
-    if(message !== null) {
-      this.push(message)
+    if(error) {
+      this.push(error)
     }
   }
 
-  push(message: string): GraphqlErrorMessages {
-    this._errors.push({message})
+  push(error: MyErrorFormat): GraphqlErrorMessageList {
+    this._errors.push({
+      message: error.message,
+      statusCode: error.statusCode
+    })
     return this
   }
 
-  get errors(): {message: string}[] {
-    return this._errors 
+  get errors(): MyErrorFormat[] {
+    return this._errors
   }
 }
 
@@ -62,7 +65,24 @@ export class GraphqlErrorMessages {
  * sha1 암호화
  */
 export function encrypt(src: string): string {
-  return createHmac('sha1', secret)
+  return createHmac('sha1', cf.jwt.secret)
           .update(src)
           .digest('base64')
+}
+
+/**
+ * status code 와 함께 Error 객체
+ */
+export class ErrorWithStatusCode extends Error implements MyErrorFormat {
+  constructor(public message: string, public statusCode: number = 500) {
+    super(message)
+  }
+}
+
+/**
+ * 밖으로 내보낼 Error 포멧
+ */
+export interface MyErrorFormat {
+  message: string
+  statusCode?: number
 }

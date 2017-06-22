@@ -5,9 +5,9 @@
 import {expect} from 'chai'
 import * as request from 'supertest'
 import {verify} from 'jsonwebtoken'
-import promisify from 'fourdollar.promisify'
+import p from 'fourdollar.promisify'
 import {Server} from '../app'
-import {secret} from '../config'
+import cf from '../config'
 
 
 describe('test app', () => {
@@ -15,7 +15,7 @@ describe('test app', () => {
 
   it('echo', async () => {
     const test = server.post('/graphql')
-    const res: request.Response = await promisify(
+    const res: request.Response = await p(
       test.send({
         query: `
         {
@@ -34,7 +34,7 @@ describe('test app', () => {
 
   it('createUser', async () => {
     const test = server.post('/graphql')
-    const res: request.Response = await promisify(
+    const res: request.Response = await p(
       test.send({
         query: `
         mutation {
@@ -88,7 +88,7 @@ describe('test app', () => {
 
   it('user', async () => {
     const test = server.post('/graphql')
-    const res: request.Response = await promisify(
+    const res: request.Response = await p(
       test.send({
         query: `
         {
@@ -113,7 +113,7 @@ describe('test app', () => {
 
   it('users', async () => {
     const test = server.post('/graphql')
-    const res: request.Response = await promisify(
+    const res: request.Response = await p(
       test.send({
         query: `
         {
@@ -136,7 +136,7 @@ describe('test app', () => {
 
   it('createToken', async () => {
     const test = server.post('/graphql')
-    const res: request.Response = await promisify(
+    const res: request.Response = await p(
       test.send({
         query: `
         mutation {
@@ -154,7 +154,7 @@ describe('test app', () => {
     expect(res.body.data).to.have.property('token')
     const token = res.body.data.token
     expect(token).to.be.not.null
-    const decoded = await promisify(verify)(token, secret)
+    const decoded = await p(verify)(token, cf.jwt.secret)
     expect(decoded.username).to.be.equal('bynaki')
     expect(decoded.email).to.be.equal('bynaki@email.com')
     expect(decoded.exp - decoded.iat).to.be.equal(1)
@@ -162,7 +162,7 @@ describe('test app', () => {
 
   it('인증되지 않은 상태에서 myProfile를 query하면 에러가 난다.', async () => {
     const test = server.post('/graphql')
-    const res: request.Response = await promisify(
+    const res: request.Response = await p(
       test.send({
         query: `
         {
@@ -176,7 +176,7 @@ describe('test app', () => {
         `
       })
       .expect('Content-Type', /json/)
-      .expect(200)
+      .expect(401)
       .end
     , test)()
     expect(res.body.data.myProfile).to.be.null
@@ -188,7 +188,7 @@ describe('test app', () => {
 
     before(async () => {
       const test = server.post('/graphql')
-      const res: request.Response = await promisify(test.send({
+      const res: request.Response = await p(test.send({
         query: `
         mutation {
           token: createToken(
@@ -204,7 +204,7 @@ describe('test app', () => {
 
     it('myProfile > header로 token', async () => {
       const test = server.post('/graphql')
-      const res: request.Response = await promisify(
+      const res: request.Response = await p(
         test.set('x-access-token', token)
         .send({
           query: `
@@ -233,7 +233,7 @@ describe('test app', () => {
 
     it('myProfile > query로 token', async () => {
       const test = server.post('/graphql')
-      const res: request.Response = await promisify(
+      const res: request.Response = await p(
         test.query({token})
         .send({
           query: `
@@ -262,7 +262,7 @@ describe('test app', () => {
 
     it('myProfile > 잘못된 token', async () => {
       const test = server.post('/graphql')
-      const res: request.Response = await promisify(
+      const res: request.Response = await p(
         test.query({token: 'this is wrong token.'})
         .send({
           query: `
@@ -277,7 +277,7 @@ describe('test app', () => {
           `
         })
         .expect('Content-Type', /json/)
-        .expect(500)
+        .expect(401)
         .end
       , test)()
       expect(res.body.errors[0].message).to.be.equal(

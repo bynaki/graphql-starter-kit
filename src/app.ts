@@ -3,15 +3,34 @@
  */
 
 import * as express from 'express'
-import {Request, Response, NextFunction} from 'express'
+import {
+  Request,
+  Response,
+  NextFunction,
+} from 'express'
 import * as bodyParser from 'body-parser'
-import {GraphQLError, GraphQLFormattedError} from 'graphql'
+import {
+  GraphQLError,
+  GraphQLFormattedError
+} from 'graphql'
 import * as graphqlHTTP from 'express-graphql'
+import * as cors from 'cors'
 import * as morgan from 'morgan'
-import {secret} from './config'
-import {schema, RootResolver, RootAuthResolver} from './schema'
-import authorize from './middlewares/authorize'
-import {GraphqlErrorMessages} from './utils'
+import cf from './config'
+import {
+  schema,
+  RootResolver,
+  RootAuthResolver,
+} from './schema'
+import {
+  authentication,
+} from './middlewares/authentication'
+import {
+  GraphqlErrorMessageList,
+  ErrorWithStatusCode,
+  MyErrorFormat,
+} from './utils'
+
 
 export class Server {
   private app: express.Application
@@ -30,60 +49,41 @@ export class Server {
     this.app.use(morgan('dev'))
 
     // set the secret key variable for jwt
-    this.app.set('jwt-secret', secret)
+    // this.app.set('jwt-secret', secret)
 
     // authentication middleware
-    this.app.use(authorize)
-
-    // this.app.use('/graphql', graphqlHTTP({
-    //   schema,
-    //   rootValue,
-    //   graphiql: true,
-    // }))
-
-    // this.app.use('/graphql', (req: Request, res: Response, next: NextFunction) => {
-    //   graphqlHTTP((req: Request) => {
-    //     const decodedToken = req['decoded']
-    //     if(decodedToken) {
-    //       return {
-    //         schema,
-    //         rootValue: new RootAuthResolver(decodedToken),
-    //         graphiql: true,
-    //         formatError: formatError(req, res, next),
-    //       }
-    //     } else {
-    //       return {
-    //         schema,
-    //         rootValue: new RootResolver(),
-    //         graphiql: true,
-    //         formatError: formatError(req, res, next),
-    //       }
-    //     }
-    //   })(req, res)
-    // })
+    this.app.use(cors(), authentication(cf.jwt))
 
     // graphql middleware
-    this.app.use('/graphql', graphqlHTTP((req: Request) => {
+    this.app.use('/graphql', cors(), (req: Request, res: Response, next: NextFunction) => {
       const decodedToken = req['decoded']
-      if(decodedToken) {
-        return {
-          schema,
-          rootValue: new RootAuthResolver(decodedToken),
-          graphiql: true,
-        }
-      } else {
-        return {
-          schema,
-          rootValue: new RootResolver(),
-          graphiql: true,
-        }
-      }
-    }))
+      graphqlHTTP({
+        schema,
+        rootValue: (decodedToken)? new RootAuthResolver(decodedToken) : new RootResolver(),
+        graphiql: true,
+        formatError: (error: GraphQLError): MyErrorFormat => {
+          if(!error) {
+            throw new Error('Received null or undefined error.')
+          }
+          let statusCode = 500
+          if(error.originalError && (error.originalError as MyErrorFormat).statusCode) {
+            statusCode = (error.originalError as MyErrorFormat).statusCode
+          }
+          res.statusCode = statusCode
+          return {
+            message: error.message,
+            statusCode,
+          }
+        },
+      })(req, res)
+    })
 
     // 내부 에러 처리
-    this.app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-      res.status(500).json({
-        errors: new GraphqlErrorMessages((err as Error).message).errors
+    this.app.use((err: ErrorWithStatusCode, req: Request, res: Response, next: NextFunction) => {
+      let statusCode = (err.statusCode)? err.statusCode : 500
+      const error = new ErrorWithStatusCode(err.message, statusCode)
+      res.status(statusCode).json({
+        errors: new GraphqlErrorMessageList(error).errors
       })
     })
   }
