@@ -4,7 +4,11 @@
  */
 
 import * as jwt from 'jsonwebtoken'
-import {Request, Response, NextFunction} from 'express'
+import {
+  Request,
+  Response,
+  NextFunction,
+} from 'express'
 import p from 'fourdollar.promisify'
 import {
   JwtConfig,

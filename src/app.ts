@@ -48,9 +48,6 @@ export class Server {
     // print the request log on console
     this.app.use(morgan('dev'))
 
-    // set the secret key variable for jwt
-    // this.app.set('jwt-secret', secret)
-
     // authentication middleware
     this.app.use(cors(), authentication(cf.jwt))
 
@@ -92,17 +89,3 @@ export class Server {
     return this.app
   }
 }
-
-// 디버깅에 활용하자
-// function formatError(req: Request, res: Response, next: NextFunction) {
-//   return (error: GraphQLError) => {
-//     if(!error) {
-//       throw new Error('Received null or undefined error.')
-//     }
-//     return {
-//       message: error.message,
-//       locations: error.locations,
-//       path: error.path,
-//     }
-//   }
-// }
