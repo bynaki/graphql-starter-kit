@@ -32,6 +32,23 @@ describe('test app', () => {
     expect(res.body.data.re).to.equal('received Hello World')
   })
 
+  it('Bad Request (잘못된 질의)', async () => {
+    const test = server.post('/graphql')
+    const res: request.Response = await p(
+      test.send({
+        query: `
+        {
+          re: badRequest
+        }
+        `,
+      })
+      .expect('Content-Type', /json/)
+      .expect(400)
+      .end, test)()
+    expect(res.body.errors[0].message)
+      .to.equal('Cannot query field "badRequest" on type "Query".')
+  })
+
   it('createUser', async () => {
     const test = server.post('/graphql')
     const res: request.Response = await p(

@@ -28,7 +28,6 @@ import {
 import {
   GraphqlErrorMessageList,
   ErrorWithStatusCode,
-  MyErrorFormat,
 } from './utils'
 
 
@@ -58,19 +57,18 @@ export class Server {
         schema,
         rootValue: (decodedToken)? new RootAuthResolver(decodedToken) : new RootResolver(),
         graphiql: true,
-        formatError: (error: GraphQLError): MyErrorFormat => {
+        formatError: (error: GraphQLError) => {
           if(!error) {
             throw new Error('Received null or undefined error.')
           }
-          let statusCode = 500
-          if(error.originalError && (error.originalError as MyErrorFormat).statusCode) {
-            statusCode = (error.originalError as MyErrorFormat).statusCode
+          if(error.originalError) {
+            if((error.originalError as ErrorWithStatusCode).statusCode) {
+              res.statusCode = (error.originalError as ErrorWithStatusCode).statusCode
+            } else {
+              res.statusCode = 500
+            }
           }
-          res.statusCode = statusCode
-          return {
-            message: error.message,
-            statusCode,
-          }
+          return error
         },
       })(req, res)
     })
@@ -78,7 +76,7 @@ export class Server {
     // 내부 에러 처리
     this.app.use((err: ErrorWithStatusCode, req: Request, res: Response, next: NextFunction) => {
       let statusCode = (err.statusCode)? err.statusCode : 500
-      const error = new ErrorWithStatusCode(err.message, statusCode)
+      const error = new Error(err.message)
       res.status(statusCode).json({
         errors: new GraphqlErrorMessageList(error).errors
       })

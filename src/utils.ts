@@ -41,7 +41,7 @@ let _knex = null
 export class GraphqlErrorMessageList {
   private _errors: MyErrorFormat[]
 
-  constructor(error: MyErrorFormat = null) {
+  constructor(error: Error = null) {
     this._errors = []
     if(error) {
       this.push(error)
@@ -51,7 +51,6 @@ export class GraphqlErrorMessageList {
   push(error: MyErrorFormat): GraphqlErrorMessageList {
     this._errors.push({
       message: error.message,
-      statusCode: error.statusCode
     })
     return this
   }
@@ -73,16 +72,15 @@ export function encrypt(src: string): string {
 /**
  * status code 와 함께 Error 객체
  */
-export class ErrorWithStatusCode extends Error implements MyErrorFormat {
+export class ErrorWithStatusCode extends Error {
   constructor(public message: string, public statusCode: number = 500) {
     super(message)
   }
 }
 
 /**
- * 밖으로 내보낼 Error 포멧
+ * 외부로 보낼 Error 포맷
  */
 export interface MyErrorFormat {
   message: string
-  statusCode?: number
 }
