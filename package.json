@@ -4,7 +4,7 @@
   "description": "graphql starter kit",
   "main": "./build/server.js",
   "scripts": {
-    "start": "gulp start",
+    "start": "gulp build && node ./build/server.js",
     "test": "gulp test",
     "build": "gulp build",
     "clear": "gulp clear",

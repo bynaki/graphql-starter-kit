@@ -132,23 +132,6 @@ gulp.task('test.watch', ['test'], () => {
 })
 
 /**
- * run main in `package.json`
- */
-gulp.task('start', ['build'], done => {
-  entryPoint((err, ep) => {
-    if(err) {
-      done(err)
-      return
-    }
-    exec(`node "${ep}"`, (err, stdout, stderr) => {
-      stdout && console.log(stdout)
-      stderr && console.log(stderr)
-      done(err)
-    })
-  })
-})
-
-/**
  * start.watch
  */
 gulp.task('start.watch', ['build'], done => {
